@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie-edge,safari">
+		<link rel="stylesheet" href="{{ url_for('static',filename='css/w3.css')}}">
+		<title>Student Information V1.0</title>
+	</head>
+	<body onload="myfocus()">
+		<div class="w3-bar w3-container w3-padding w3-blue" style="display: flex; align-items: center; justify-content: space-between;">
+			<!-- Title aligned to the left -->
+			<h3 style="margin: 0;">{{ pagetitle }}</h3>
+			
+			
+		</div>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div class="w3-panel w3-green w3-card w3-round w3-padding w3-animate-opacity">
+        <ul class="w3-ul">
+            {% for message in messages %}
+                <li class="w3-text-white">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+{% endwith %} 
+
+<style>
+    body {
+        background: url('/mnt/data/1.jpg') no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1400px; /* Increased max width for container */
+        margin: 0 auto;
+        padding-top: 50px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .student-info-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px; /* Increased gap for wider spacing */
+        margin-top: 30px;
+    }
+
+    .student-card {
+        width: 350px; /* Increased width for each card */
+        background-color: rgba(0, 0, 0, 0.7); /* Darkened background with transparency */
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Darker shadow for better contrast */
+        overflow: hidden;
+        text-align: left; /* Align text to the left */
+        padding: 20px; /* Increased padding for better spacing */
+        transition: transform 0.3s ease-in-out;
+        margin-bottom: 30px; /* Increased bottom margin */
+        color: #fff; /* White text for better contrast with dark background */
+    }
+
+    .student-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .student-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-bottom: 2px solid #f1f1f1;
+    }
+
+    .student-card .info {
+        padding: 20px 0; /* Increased padding inside info */
+    }
+
+    .student-card .info p {
+        margin: 10px 0;
+        color: #fff; /* White text for readability */
+        font-size: 1rem;
+    }
+
+    .student-card .info .label {
+        font-weight: bold;
+        color: #fff; /* White labels */
+        display: inline-block;
+        width: 140px; /* Increased width for labels */
+        text-align: left; /* Left-align labels */
+        text-transform: uppercase; /* Convert labels to uppercase */
+    }
+
+    .student-card .info .value {
+        display: inline-block;
+        color: #fff; /* White text for values */
+    }
+
+    .error-message {
+        color: red;
+        font-weight: bold;
+        text-align: center;
+    }
+    .container {
+        margin: 70px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        width: 350px;
+        text-align: center;
+        margin: auto;
+    }
+    a{
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        text-decoration: none;
+    }
+    label {
+        display: block;
+        width: 50%;
+        margin-left: 10px;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        text-align: left;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+    }
+    
+    .forms {
+        display: none;
+    }
+    
+    #login-form:target, #signup-form:target {
+        display: block;
+    }
+    
+    .btn-clck{ 
+        width: 60px;
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        background: #FF9D3D;
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        transition: background 0.3s;
+        margin-top: 15px;
+        font-weight: bold;
+        width: 100%;
+        padding: 12px;
+        color: white;
+        background-color: #FF9D3D;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+    
+    .btn-clck:hover {
+        background-color: #F7F0E2;
+        color: black;
+    }
+    
+    input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+    }
+    
+    
+    button:hover {
+        background-color: #F7F0E2;
+        color: black;
+    }
+    img{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        padding-bottom: 20px;
+    }
+</style>
+<h3 class="w3-center"><b>Scan you ID here:</b></h3>
+<div class="container" style="opacity: 0; flex-direction: start;">
+    <form action="/mark_attendance" method="post" >
+        <input id="student_id" type="number" name="student_id" required>
+        
+        <label for="status" style="opacity: 0;">Status:</label>
+        <select name="status" style="opacity: 0;">
+            <option value="Present" selected style="opacity: 0;">Present</option>
+            <option value="Absent" style="opacity: 0;">Absent</option>
+        </select>
+        
+        <button type="submit" style="opacity: 0;">Mark Attendance</button>
+    </form>
+</div>
+
+<div id="student-details">
+    {% if student %}
+    <div class="student-info-container w3-gray-200">
+        {% for student in student %}
+            <div class="student-card w3-card w3-blue" >
+
+                <img src="{{ url_for('static', filename='images/' + student.image) }}" alt="Student Image">
+                <div class="info">
+                    <!-- <p>{{ url_for('static', filename='images/' + student.image) }}</p> -->
+                    <p><span class="label">IDNO:</span> <span class="value">{{ student.idno }}</span></p>
+                    <p><span class="label">Last Name:</span> <span class="value">{{ student.lastname }}</span></p>
+                    <p><span class="label">First Name:</span> <span class="value">{{ student.firstname }}</span></p>
+                    <p><span class="label">Course:</span> <span class="value">{{ student.course }}</span></p>
+                    <p><span class="label">Level:</span> <span class="value">{{ student.level }}</span></p>
+                   
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- Handle case where no student details are found -->
+{% endif %}
+
+</div>
+
+<script>
+    function showStudentDetails() {
+        const studentId = document.getElementById('student_id').value;
+        const detailsSection = document.getElementById('student-details');
+    
+        if (studentId) {
+            detailsSection.style.display = 'block'; // Show the student details section
+            return true; // Allow form submission
+        }
+    
+        detailsSection.style.display = 'none'; // Hide the student details section
+        return false; // Prevent form submission
+    }
+
+    // Focus the student_id field when the page loads
+    function myfocus() {
+        document.getElementById("student_id").focus();
+    }
+
+    // Call myfocus on page load
+    window.onload = myfocus;
+</script>
+
+    </body>
+    </html>
+
+   
+
+

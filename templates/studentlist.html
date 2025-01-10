@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="w3-container w3-margin-top">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="w3-panel w3-red w3-card w3-round w3-padding w3-animate-opacity">
+            <ul class="w3-ul">
+                {% for message in messages %}
+                    <li class="w3-text-white">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% endwith %}   
+      <table id="studentTable" class="w3-table-all">
+                <thead>
+                    <tr>
+                        <th>IDNO</th>
+                        <th class="w3-hide-small w3-hide-medium">LASTNAME</th>
+                        <th class="w3-hide-small w3-hide-medium">FIRSTNAME</th>
+                        <th class="w3-hide-large w3-hide-medium">NAME</th>
+                        <th class="w3-hide-small w3-hide-medium">COURSE</th>
+                        <th class="w3-hide-large w3-hide-medium">COURSE-LEVEL</th>
+                        <th class="w3-hide-small w3-hide-medium">LEVEL</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr data-student-id="{{ student[0] }}">
+                        <td>{{ student[0] }}</td>
+                        <td class="w3-hide-small w3-hide-medium">{{ student[1] }}</td>
+                        <td class="w3-hide-small w3-hide-medium">{{ student[2] }}</td>
+                        <td class="w3-hide-large w3-hide-medium">{{ student[3] }}, {{ student[3] }}</td>
+                        <td class="w3-hide-small w3-hide-medium">{{ student[3] }}</td>
+                        <td class="w3-hide-small w3-hide-medium">{{ student[4] }}</td>
+                        <td class="w3-hide-large w3-hide-medium">{{ student[4] }}-{{ student[5] }}</td>
+						
+                        <td>
+                            <button onclick="editStudent({{ student[0] }})">&#9998;</button>
+                            <button onclick="deleteStudent({{ student[0] }})">&#128465;</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+          <script>
+		setTimeout(function() {
+        var flashMessages = document.querySelectorAll('.w3-panel.w3-padding.w3-green');
+        flashMessages.forEach(function(message) {
+            message.style.display = 'none';
+        });
+    }, );
+	
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('image').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+		function editStudent(studentId) {
+			var row = document.querySelector('#studentTable tr[data-student-id="' + studentId + '"]');
+			var idno = row.cells[0].textContent;
+			var lastname = row.cells[1].textContent;
+			var firstname = row.cells[2].textContent;
+			var course = row.cells[4].textContent;
+			var level = row.cells[5].textContent; 
+			var imgElement = row.cells[6].querySelector('img');
+			var imgSrc = imgElement ? imgElement.src : '/static/images/students/personicon.jpeg';
+
+			document.getElementById('idno').value = idno;
+			document.getElementById('lastname').value = lastname;
+			document.getElementById('firstname').value = firstname;
+			document.getElementById('course').value = course;
+			document.getElementById('level').value = level;
+			document.getElementById('image').src = imgSrc;
+
+			var form = document.getElementById('studentForm');
+			form.action = '/edit/' + studentId;
+						
+			document.getElementById('image').removeAttribute('required');
+				
+			const saveButton = document.querySelector('#studentForm input[type="submit"]');
+			saveButton.value = 'UPDATE';
+}
+
+function readURL(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				document.getElementById('image').src = e.target.result;
+			};
+			reader.readAsDataURL(input.files[0]);
+		}
+}
+
+function resetForm() {
+		var form = document.getElementById('studentForm');
+		form.action = '/saveinformation';
+		form.reset();
+		document.getElementById('image').src = '/static/images/personicon.jpg';
+		document.getElementById('imageupload').setAttribute('required', '');
+		document.querySelector('#studentForm input[type="submit"]').value = 'SAVE';
+}
+
+
+document.querySelector('#studentForm input[type="reset"]').onclick = resetForm;
+
+		document.querySelector('#studentForm input[type="reset"]').onclick = resetForm;
+		
+		
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                
+                fetch('/delete/' + studentId, {method: 'GET'})
+                    .then(response => {
+                        if (response.ok) {
+                            
+                            document.querySelector('#studentTable tr[data-student-id="' + studentId + '"]').remove();
+                        } else {
+                            console.error('Failed to delete student.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+    </script>
+
+    {% endblock %}
+
