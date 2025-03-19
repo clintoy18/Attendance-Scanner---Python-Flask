@@ -71,7 +71,7 @@
 
     .student-card img {
         width: 100%;
-        height: 200px;
+        height: 310px;
         object-fit: cover;
         border-bottom: 2px solid #f1f1f1;
     }
@@ -81,7 +81,7 @@
     }
 
     .student-card .info p {
-        margin: 10px 0;
+        margin: 20px 0;
         color: #fff; /* White text for readability */
         font-size: 1rem;
     }
@@ -209,7 +209,7 @@
         {% for student in student %}
             <div class="student-card w3-card w3-blue" >
 
-                <img src="{{ url_for('static', filename='images/' + student.image) }}" alt="Student Image">
+                <img src="{{ url_for('static', filename='images/' + student['image'].split('/')[-1]) }}" alt="Student Image">
                 <div class="info">
                     <!-- <p>{{ url_for('static', filename='images/' + student.image) }}</p> -->
                     <p><span class="label">IDNO:</span> <span class="value">{{ student.idno }}</span></p>

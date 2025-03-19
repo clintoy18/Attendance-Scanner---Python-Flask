@@ -55,26 +55,29 @@ def get_students() -> list:
     sql = "SELECT * FROM `students`"
     return getprocess(sql)
 
+import sqlite3
+
 def get_student(student_id):
-    # This is a placeholder function, modify it to fetch from your database
-    # Example if using SQLite:
+    """Fetch student details by ID from the database."""
     conn = sqlite3.connect('studentchecker.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM `students` WHERE idno = ?", (student_id,))
+    
+    # Ensure the column order matches your database schema
+    cursor.execute("SELECT idno, lastname, firstname, course, level, image FROM students WHERE idno = ?", (student_id,))
     student = cursor.fetchone()  # Fetch one record
     conn.close()
     
     if student: 
-        # Return the student data as a dictionary (for easier access in template)
         return {
             'idno': student[0],  
-            'firstname': student[1],
-            'lastname': student[2],
+            'lastname': student[1],
+            'firstname': student[2],
             'course': student[3],
             'level': student[4],
-            'image': student[5]  
+            'image': student[5]  # Assuming this is the correct path
         }
     return None
+
 
 
 def edit_student(id: int, **kwargs) -> bool:
