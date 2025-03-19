@@ -33,10 +33,10 @@
     }
 
     .container {
-        width: 90%;
+        width: 100%;
         max-width: 1400px; /* Increased max width for container */
         margin: 0 auto;
-        padding-top: 50px;
+        padding-top: -200px;
     }
 
     h1 {
@@ -53,7 +53,7 @@
     }
 
     .student-card {
-        width: 350px; /* Increased width for each card */
+        width: 400px; /* Increased width for each card */
         background-color: rgba(0, 0, 0, 0.7); /* Darkened background with transparency */
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Darker shadow for better contrast */
@@ -71,7 +71,7 @@
 
     .student-card img {
         width: 100%;
-        height: 310px;
+        height: 350px;
         object-fit: cover;
         border-bottom: 2px solid #f1f1f1;
     }
@@ -108,7 +108,7 @@
     .container {
         margin: 70px;
         background: white;
-        padding: 20px;
+        padding: px;
         border-radius: 20px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         width: 350px;
@@ -187,6 +187,16 @@
         width: 100%;
         padding-bottom: 20px;
     }
+
+    @keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
+.student-card {
+    animation: fadeOut 1s ease-in-out 4s forwards;
+}
+
 </style>
 <h3 class="w3-center"><b>Scan you ID here:</b></h3>
 <div class="container" style="opacity: 0; flex-direction: start;">
@@ -202,31 +212,41 @@
         <button type="submit" style="opacity: 0;">Mark Attendance</button>
     </form>
 </div>
-
 <div id="student-details">
     {% if student %}
     <div class="student-info-container w3-gray-200">
         {% for student in student %}
-            <div class="student-card w3-card w3-blue" >
-
+            <div class="student-card w3-card w3-blue" id="student-card">
                 <img src="{{ url_for('static', filename='images/' + student['image'].split('/')[-1]) }}" alt="Student Image">
                 <div class="info">
-                    <!-- <p>{{ url_for('static', filename='images/' + student.image) }}</p> -->
                     <p><span class="label">IDNO:</span> <span class="value">{{ student.idno }}</span></p>
                     <p><span class="label">Last Name:</span> <span class="value">{{ student.lastname }}</span></p>
                     <p><span class="label">First Name:</span> <span class="value">{{ student.firstname }}</span></p>
                     <p><span class="label">Course:</span> <span class="value">{{ student.course }}</span></p>
                     <p><span class="label">Level:</span> <span class="value">{{ student.level }}</span></p>
-                   
                 </div>
             </div>
         {% endfor %}
     </div>
-{% else %}
-    <!-- Handle case where no student details are found -->
-{% endif %}
 
+    <script>
+        // Wait for the page to fully load
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the student card element
+            const studentCard = document.getElementById("student-card");
+
+            // If the student card exists, hide it after 4 seconds
+            if (studentCard) {
+                setTimeout(function() {
+                    studentCard.style.display = "none";
+                }, 4000); // 4000ms = 4 seconds
+            }
+        });
+    </script>
+
+    {% endif %}
 </div>
+
 
 <script>
     function showStudentDetails() {
