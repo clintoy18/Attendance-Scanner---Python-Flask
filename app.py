@@ -3,8 +3,6 @@ from sqlite3 import connect, Row
 from datetime import datetime
 import os 
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, g, make_response
-import cv2
-import numpy as np
 from io import BytesIO
 import sqlite3
 import base64
