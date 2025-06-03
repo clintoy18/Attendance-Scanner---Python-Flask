@@ -200,7 +200,7 @@ def attendance():
         ORDER BY a.date DESC
         """
         attendance_records = getprocess(sql)
-        return render_template("attendance.html", pagetitle="View Attendance", attendance_records=attendance_records)
+        return render_template("attendance.html", pagetitle="View Youth Logs", attendance_records=attendance_records)
     except Exception as e:
         flash(f"Failed to retrieve attendance: {e}")
         return render_template("attendance.html", attendance_records=[])

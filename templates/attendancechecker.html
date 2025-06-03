@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Student Information V2.0</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,13 +15,59 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%), 
-                        url("{{ url_for('static', filename='sk_logo.png') }}") no-repeat center center fixed;
-            background-size: cover;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .w3-card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .w3-button {
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .w3-button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .w3-input {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .w3-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .w3-table th, .w3-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .w3-table th {
+            background-color: #f4f4f4;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
         }
 
         /* Animated background elements */
