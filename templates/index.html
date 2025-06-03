@@ -1,8 +1,8 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 
 {% block content %}
-    {% with messages = get_flashed_messages()%}
-        {% if messages%}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
             {% for message in messages %}
             <div class="w3-panel w3-padding w3-green w3-display-container">
                 <span onclick="this.parentElement.style.display='none'" class="w3-button w3-green w3-large w3-display-topright">&times;</span>
@@ -11,283 +11,143 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 
-    <div class="w3-row-padding">
-        <div class="w3-third w3-padding">
-            <div class="w3-card-4 w3-container w3-padding">
-                <form id="studentForm" action="/saveinformation " method="post" enctype="multipart/form-data"> 
-                    <p class="w3-center">
-                        <div id="webcam" class="w3-card-2 w3-container w3-center w3-round-xlarge" style="width: 100%; max-width: 250px; height: 250px; display: flex; justify-content: center; align-items: center; background-color: #f1f1f1; border: 2px dashed #ccc; margin-bottom: 20px; margin: 0 auto;"></div>
-						<!-- <label for="imageupload">
-							<img id="image" src="../static/images/personicon.jpeg" style="width:30%">
-							<input id="imageupload" type="file" name="imageupload" style="display:none"  required>
-						</label> -->
-					</p>
-					<p>
-						<label><b>IDNO</b></label>
-						<input type="text" name="idno" id="idno" class="w3-input" required>
-					</p>
-					<p>
-						<label><b>LASTNAME</b></label>
-						<input type="text" name="lastname" id="lastname" class="w3-input" required>
-					</p>
-					<p>
-						<label><b>FIRSTNAME</b></label>
-						<input type="text" name="firstname" id="firstname" class="w3-input" required>
-					</p>
-                    <p>
-                        <label>COURSE</label>
-                        <select name="course" id="course" class="w3-input w3-border w3-round-large" required>
-                            <option value="BSIT">BSIT - Bachelor of Science in Information Technology</option>
-                            <option value="BSCS">BSCS - Bachelor of Science in Computer Science</option>
-                            <option value="BSCJ">BSCJ - Bachelor of Science in Criminal Justice</option>
-                            <option value="BSCPE">BSCPE - Bachelor of Science in Computer Engineering</option>
-                            <option value="BSHM">BSHM - Bachelor of Science in Hospitality Management</option>
-                        </select>
-                    </p>
-                    <p>
-                        <label>LEVEL</label>
-                        <select name="level" id="level" class="w3-input w3-border w3-round-large" required>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                        </select>
-                    </p>
-                        <button type="button" class="w3-button w3-green w3-round-large" onclick="capturePhoto()" id="snapButton" disable>SNAP</button>
-    
-						<!-- <input class="w3-button w3-blue" type="submit" value="&#128427; SAVE" style="width: 48%;" onclick="save">
-						&nbsp; 
-						<input class="w3-button w3-red" type="reset" value="CANCEL" style="width: 48%;"> -->
-					</p>
-                </form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+<div class="w3-row-padding">
+    <div class="w3-third w3-padding">
+        <div class="w3-card-4 w3-container w3-padding">
+            <form id="studentForm" action="/saveinformation" method="post" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm();"> 
+                <p class="w3-center">
+                    <div id="webcam" style="width: 250px; height: 250px; margin: 0 auto; background-color: #f1f1f1; border: 2px dashed #ccc;"></div>
+                </p>
+                <p>
+                    <label><b>IDNO</b></label>
+                    <input type="text" name="idno" id="idno" class="w3-input" required oninput="validateIDNO()">
+                </p>
+                <p>
+                    <label><b>FIRSTNAME</b></label>
+                    <input type="text" name="firstname" id="firstname" class="w3-input" required oninput="enableSnapButton()">
+                </p>
+                <p>
+                    <label><b>LASTNAME</b></label>
+                    <input type="text" name="lastname" id="lastname" class="w3-input" required oninput="enableSnapButton()">
+                </p>
+                <p>
+                    <label><b>SITIO</b></label>
+                    <select name="sitio" id="sitio" class="w3-input w3-border w3-round-large" required onchange="enableSnapButton()">
+                        <option value="">-- Select Sitio --</option>
+                        <option value="BATO">BATO</option>
+                        <option value="VENDOR">VENDOR</option>
+                        <option value="YHC">YHC</option>
+                        <option value="UYC">UYC</option>
+                        <option value="KAWIT">KAWIT</option>
+                        <option value="PANAGDAIT">PANAGDAIT</option>
+                    </select>
+                </p>
+                <p>
+                    <button type="button" id="snapButton" class="w3-button w3-green w3-round-large" onclick="capturePhoto()" disabled>SNAP</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div class="w3-twothird w3-padding">
+        <div class="w3-card-4 w3-container w3-padding">
+            <h3>Review Information</h3>
+            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                <div style="flex: 1; text-align: center;">
+                    <h4>Captured Photo</h4>
+                    <img id="reviewPhoto" src="" style="max-width: 200px; height: auto; object-fit: cover; border: 1px solid #ccc; display: none;">
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <p><strong>IDNO:</strong> <span id="reviewIdno"></span></p>
+                <p><strong>FIRSTNAME:</strong> <span id="reviewFirstname"></span></p>
+                <p><strong>LASTNAME:</strong> <span id="reviewLastname"></span></p>
+                <p><strong>SITIO:</strong> <span id="reviewSitio"></span></p>
+
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="submitForm()" class="w3-button w3-blue">SAVE</button>
+                    <button onclick="cancelAddStudent()" class="w3-button w3-red">CANCEL</button>
+                </div>
             </div>
         </div>
-        <div class="w3-twothird w3-padding">
-            <div class="w3-card-4 w3-container w3-padding">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                        <img id="reviewPhoto" src="" style="max-width: 200px; height: auto; object-fit: cover;">
-                    </div>
-                </div>
-        
-                <div style="margin-top: 20px;">
-                    <p><strong>IDNO:</strong> <span id="reviewIdno"></span></p>
-                    <p><strong>LASTNAME:</strong> <span id="reviewLastname"></span></p>
-                    <p><strong>FIRSTNAME:</strong> <span id="reviewFirstname"></span></p>
-                    <p><strong>COURSE:</strong> <span id="reviewCourse"></span></p>
-                    <p><strong>LEVEL:</strong> <span id="reviewLevel"></span></p>
-        
-                    <div style="display: flex-1; justify-content: space-between; gap: 10px;">
-                        <button onclick="submitForm()" class="w3-button w3-blue">&#128427; SAVE</button>
-                        <button onclick="cancelAddStudent()" class="w3-button w3-red">CANCEL</button>
-                    </div>
-                </div>
-            </div>
-            <!-- <table id="studentTable" class="w3-table-all">
-                <thead>
-                    <tr>
-                        <th>IDNO</th>
-                        <th class="w3-hide-small w3-hide-medium">LASTNAME</th>
-                        <th class="w3-hide-small w3-hide-medium">FIRSTNAME</th>
-                        <th class="w3-hide-large w3-hide-medium">NAME</th>
-                        <th class="w3-hide-small w3-hide-medium">COURSE</th>
-                        <th class="w3-hide-large w3-hide-medium">COURSE-LEVEL</th>
-                        <th class="w3-hide-small w3-hide-medium">LEVEL</th>
-                        <th>ACTION</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                    <tr data-student-id="{{ student[0] }}">
-                        <td>{{ student[0] }}</td>
-                        <td class="w3-hide-small w3-hide-medium">{{ student[1] }}</td>
-                        <td class="w3-hide-small w3-hide-medium">{{ student[2] }}</td>
-                        <td class="w3-hide-large w3-hide-medium">{{ student[3] }}, {{ student[3] }}</td>
-                        <td class="w3-hide-small w3-hide-medium">{{ student[3] }}</td>
-                        <td class="w3-hide-small w3-hide-medium">{{ student[4] }}</td>
-                        <td class="w3-hide-large w3-hide-medium">{{ student[4] }}-{{ student[5] }}</td>
-						
-                        <td>
-                            <button onclick="editStudent({{ student[0] }})">&#9998;</button>
-                            <button onclick="deleteStudent({{ student[0] }})">&#128465;</button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table> -->
-        <!-- </div> -->
-        <!-- <form action="/mark_attendance" method="post">
-            <label for="student_id">Student ID:</label>
-            <input type="number" name="student_id" required>
-            <label for="status">Status:</label>
-            <select name="status">
-                <option value="Present">Present</option>
-                <option value="Absent">Absent</option>
-            </select>
-            <button type="submit">Mark Attendance</button>
-        </form> -->
-        
     </div>
-    <script>
-		setTimeout(function() {
-        var flashMessages = document.querySelectorAll('.w3-panel.w3-padding.w3-green');
-        flashMessages.forEach(function(message) {
-            message.style.display = 'none';
-        });
-    }, );
-	
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById('image').src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+</div>
 
-		function editStudent(studentId) {
-			var row = document.querySelector('#studentTable tr[data-student-id="' + studentId + '"]');
-			var idno = row.cells[0].textContent;
-			var lastname = row.cells[1].textContent;
-			var firstname = row.cells[2].textContent;
-			var course = row.cells[4].textContent;
-			var level = row.cells[5].textContent; 
-			var imgElement = row.cells[6].querySelector('img');
-			var imgSrc = imgElement ? imgElement.src : '/static/images/students/personicon.jpeg';
+<script>
+    Webcam.set({
+        width: 250,
+        height: 250,
+        image_format: 'jpeg',
+        jpeg_quality: 90
+    });
+    Webcam.attach('#webcam');
 
-			document.getElementById('idno').value = idno;
-			document.getElementById('lastname').value = lastname;
-			document.getElementById('firstname').value = firstname;
-			document.getElementById('course').value = course;
-			document.getElementById('level').value = level;
-			document.getElementById('image').src = imgSrc;
+    let capturedImage = '';
 
-			var form = document.getElementById('studentForm');
-			form.action = '/edit/' + studentId;
-						
-			document.getElementById('image').removeAttribute('required');
-				
-			const saveButton = document.querySelector('#studentForm input[type="submit"]');
-			saveButton.value = 'UPDATE';
-}
-
-function readURL(input) {
-		if (input.files && input.files[0]) {
-			var reader = new FileReader();
-			reader.onload = function(e) {
-				document.getElementById('image').src = e.target.result;
-			};
-			reader.readAsDataURL(input.files[0]);
-		}
-}
-
-function resetForm() {
-		var form = document.getElementById('studentForm');
-		form.action = '/saveinformation';
-		form.reset();
-		document.getElementById('image').src = '/static/images/personicon.jpg';
-		document.getElementById('imageupload').setAttribute('required', '');
-		document.querySelector('#studentForm input[type="submit"]').value = 'SAVE';
-}
-
-
-document.querySelector('#studentForm input[type="reset"]').onclick = resetForm;
-
-		document.querySelector('#studentForm input[type="reset"]').onclick = resetForm;
-		
-		
-        function deleteStudent(studentId) {
-            if (confirm('Are you sure you want to delete this student?')) {
-                
-                fetch('/delete/' + studentId, {method: 'GET'})
-                    .then(response => {
-                        if (response.ok) {
-                            
-                            document.querySelector('#studentTable tr[data-student-id="' + studentId + '"]').remove();
-                        } else {
-                            console.error('Failed to delete student.');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
-        }
-
-    </script>
-    <script>
-        window.onload = function() {
-            Webcam.set({
-                width: 250,
-                height: 250,
-                image_format: 'jpeg',
-                jpeg_quality: 90
-            });
-            Webcam.attach('#webcam');
-        };
-    
-        function validateIDNO() {
-            const idnoInput = document.getElementById('idno');
-            const idnoValue = idnoInput.value;
-            idnoInput.value = idnoValue.replace(/[^0-9]/g, '');  
-            enableSnapButton();
-        }
-    
-        function enableSnapButton() {
-        const idno = document.getElementById('idno').value;
-        const lastname = document.getElementById('lastname').value;
-        const firstname = document.getElementById('firstname').value;
-        const course = document.getElementById('course').value;
-        const level = document.getElementById('level').value; 
-        const snapButton = document.getElementById('snapButton');
-        
-        if (idno && lastname && firstname && course && level) {
-            snapButton.disabled = false;
-        } else {
-            snapButton.disabled = true;
-        }
+    function validateIDNO() {
+        const idnoInput = document.getElementById('idno');
+        idnoInput.value = idnoInput.value.replace(/[^0-9]/g, '');
+        enableSnapButton();
     }
-    
-        function capturePhoto() {
-            Webcam.snap(function(data_uri) {
-                document.getElementById('reviewPhoto').src = data_uri;
-                document.getElementById('reviewPhoto').style.display = "block";
-                document.getElementById('reviewIdno').textContent = document.getElementById('idno').value;
-                document.getElementById('reviewLastname').textContent = document.getElementById('lastname').value;
-                document.getElementById('reviewFirstname').textContent = document.getElementById('firstname').value;
-                document.getElementById('reviewCourse').textContent = document.getElementById('course').value;
-                document.getElementById('reviewLevel').textContent = document.getElementById('level').value;
 
-            });
+    function enableSnapButton() {
+        const idno = document.getElementById('idno').value.trim();
+        const firstname = document.getElementById('firstname').value.trim();
+        const lastname = document.getElementById('lastname').value.trim();
+        const sitio = document.getElementById('sitio').value;
+
+        document.getElementById('snapButton').disabled = !(idno && firstname && lastname && sitio);
+    }
+
+    function capturePhoto() {
+        Webcam.snap(function(data_uri) {
+            capturedImage = data_uri;
+            document.getElementById('reviewPhoto').src = data_uri;
+            document.getElementById('reviewPhoto').style.display = "block";
+
+            document.getElementById('reviewIdno').textContent = document.getElementById('idno').value;
+            document.getElementById('reviewFirstname').textContent = document.getElementById('firstname').value;
+            document.getElementById('reviewLastname').textContent = document.getElementById('lastname').value;
+            document.getElementById('reviewSitio').textContent = document.getElementById('sitio').value;
+        });
+    }
+
+    function submitForm() {
+        if (!capturedImage) {
+            alert("Please snap a photo before saving.");
+            return;
         }
-    
-        function submitForm() {
-            const formData = new FormData(document.getElementById('studentForm'));
-            formData.append('image', document.getElementById('reviewPhoto').src);  
-    
-            fetch('/saveinformation', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Student data saved successfully');
-                    window.location.href = '/mainpage';  
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                alert('An error occurred: ' + error);
-            });
-        }
-    
-        function cancelAddStudent() {
-            window.location.href = '/mainpage'; 
-        }
-    </script>
-    
-    {% endblock %}
+
+        const form = document.getElementById('studentForm');
+        const formData = new FormData(form);
+        formData.append('image', capturedImage);
+
+        fetch('/saveinformation', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Student data saved successfully');
+                window.location.href = '/mainpage';  
+            } else {
+                alert(data.message || 'Failed to save student data');
+            }
+        })
+        .catch(error => {
+            alert('An error occurred: ' + error);
+        });
+    }
+
+    function cancelAddStudent() {
+        window.location.href = '/mainpage'; 
+    }
+</script>
+
+{% endblock %}

@@ -8,29 +8,26 @@
         background: #BCF2F6;
     }
     .w3-card-4, .w3-modal-content {
-        background: #4CC9FE; /* Solid white background for cards and modal content */
+        background: #4CC9FE;
     }
     .w3-bar.w3-blue {
-        background: #0000ff; /* Solid blue background for the header bar */
+        background: #0000ff;
     }
     .w3-table-all {
-        background: #BCF2F6; /* Solid white background for the table */
-        color: #333; /* Text color for readability */
+        background: #BCF2F6;
+        color: #333;
     }
     .w3-hoverable tbody tr:hover {
-        background: #333333 !important; /* Solid dark gray background for row hover effect */
+        background: #333333 !important;
     }
-    /* Solid backgrounds for form and input elements */
     .w3-modal-content form, .w3-input, .w3-select, .w3-button {
-        background: #ffffff; /* Solid white background for form elements */
-        color: #333; /* Text color for readability */
+        background: #ffffff;
+        color: #333;
     }
-    /* Solid background for buttons with a distinct hover effect */
     .w3-button:hover {
-        background: #555555 !important; /* Solid dark background on hover */
-        color: white; /* White text for contrast */
+        background: #555555 !important;
+        color: white;
     }
-    /* Styling for the date-time display */
     .datetime {
         font-size: 18px;
         text-align: right;
@@ -41,19 +38,19 @@
 
 <div class="w3-card-4 w3-round-large w3-margin w3-padding-0">
     <div class="w3-bar w3-blue w3-padding w3-round-top-large">
-        <span class="w3-bar-item w3-bold w3-large">STUDENT ATTENDANCE</span>
-        <button class="w3-bar-item w3-button w3-right w3-border w3-white w3-round-large w3-margin-right" style="margin-right: 10px;" onclick="window.location.href='{{ url_for('add_student') }}'"> +ADD </button>
+        <span class="w3-bar-item w3-bold w3-large">YOUTH REGISTRATION</span>
+        <a href="{{ url_for('mainpage') }}" class="w3-bar-item w3-button w3-right w3-border w3-white w3-round-large w3-margin-right" style="margin-right: 10px;"> +ADD </a>
         <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-right w3-border w3-red w3-round-large" style="margin-left: 30px;"> LOGOUT </a>
-        <a href="{{ url_for('index') }}" class="w3-bar-item w3-button w3-right w3-border w3-blue w3-round-large" style="margin-left: 30px;"> VIEW ATTENDANCE </a>
+        <a href="{{ url_for('attendance') }}" class="w3-bar-item w3-button w3-right w3-border w3-blue w3-round-large" style="margin-left: 30px;"> VIEW ATTENDANCE </a>
     </div>
 </div>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 
 <div class="w3-container" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
     <div class="w3-card-4 w3-container w3-padding w3-round-xlarge" style="flex: 1; max-width: 45%; margin-bottom: 20px;">
-        <form id="studentForm" method="post" action="/add" enctype="multipart/form-data" onsubmit="event.preventDefault(); handleFormSubmit();">
+        <form id="youthForm" method="post" action="/saveinformation" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm();">
             <div id="webcam" class="w3-card-2 w3-container w3-center w3-round-xlarge" style="width: 100%; max-width: 250px; height: 250px; display: flex; justify-content: center; align-items: center; background-color: #f1f1f1; border: 2px dashed #ccc; margin-bottom: 20px; margin: 0 auto;">
             </div>
             
@@ -69,23 +66,8 @@
                 <input type="text" name="firstname" id="firstname" class="w3-input w3-border w3-round-large" required>
             </p>
             <p>
-                <label>COURSE</label>
-                <select name="course" id="course" class="w3-input w3-border w3-round-large" required>
-                    <option value="BSIT">BSIT - Bachelor of Science in Information Technology</option>
-                    <option value="BSCS">BSCS - Bachelor of Science in Computer Science</option>
-                    <option value="BSCJ">BSCJ - Bachelor of Science in Criminal Justice</option>
-                    <option value="BSCPE">BSCPE - Bachelor of Science in Computer Engineering</option>
-                    <option value="BSHM">BSHM - Bachelor of Science in Hospitality Management</option>
-                </select>
-            </p>
-            <p>
-                <label>LEVEL</label>
-                <select name="level" id="level" class="w3-input w3-border w3-round-large" required>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                </select>
+                <label>SITIO</label>
+                <input type="text" name="sitio" id="sitio" class="w3-input w3-border w3-round-large" required>
             </p>
             <button type="button" class="w3-button w3-green w3-round-large" onclick="capturePhoto()" id="snapButton" disabled>SNAP</button>
         </form>
@@ -96,7 +78,7 @@
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
                 <h4>Captured Photo:</h4>
-                <img id="reviewPhoto" src="" style="max-width: 200px; height: auto; object-fit: cover;">
+                <img id="reviewPhoto" src="" style="max-width: 200px; height: auto; object-fit: cover; display: none;">
             </div>
 
             <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
@@ -109,79 +91,91 @@
             <p><strong>IDNO:</strong> <span id="reviewIdno"></span></p>
             <p><strong>LASTNAME:</strong> <span id="reviewLastname"></span></p>
             <p><strong>FIRSTNAME:</strong> <span id="reviewFirstname"></span></p>
-            <p><strong>COURSE:</strong> <span id="reviewCourse"></span></p>
-            <p><strong>LEVEL:</strong> <span id="reviewLevel"></span></p>
+            <p><strong>SITIO:</strong> <span id="reviewSitio"></span></p>
 
             <div style="display: flex; justify-content: space-between; gap: 10px;">
                 <button onclick="submitForm()" class="w3-button w3-blue">SAVE</button>
-                <button onclick="cancelAddStudent()" class="w3-button w3-red">CANCEL</button>
+                <button onclick="cancelAddYouth()" class="w3-button w3-red">CANCEL</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-   // Initialize Webcam
-Webcam.set({
-    width: 250,
-    height: 250,
-    image_format: 'jpeg',
-    jpeg_quality: 90
-});
-Webcam.attach('#webcam');
-
-let capturedImage = ''; // Store the captured image data
-
-function capturePhoto() {
-    Webcam.snap(function(data_uri) {
-        document.getElementById('reviewPhoto').src = data_uri;
-        document.getElementById('reviewPhoto').style.display = "block";
-
-        document.getElementById('reviewIdno').textContent = document.getElementById('idno').value;
-        document.getElementById('reviewLastname').textContent = document.getElementById('lastname').value;
-        document.getElementById('reviewFirstname').textContent = document.getElementById('firstname').value;
-        document.getElementById('reviewCourse').textContent = document.getElementById('course').value;
-        document.getElementById('reviewLevel').textContent = document.getElementById('level').value;
-
-        capturedImage = data_uri; // Store the base64 image data
-
-        // Generate QR Code
-        const qrData = document.getElementById('idno').value;
-        document.getElementById('qrCode').innerHTML = ''; // Clear previous QR
-        new QRCode(document.getElementById('qrCode'), {
-            text: qrData,
-            width: 150,
-            height: 150
-        });
+    // Initialize Webcam
+    Webcam.set({
+        width: 250,
+        height: 250,
+        image_format: 'jpeg',
+        jpeg_quality: 90
     });
-}
+    Webcam.attach('#webcam');
 
-// Enable the "SNAP" button only when IDNO is entered
-document.getElementById('idno').addEventListener('input', function () {
-    document.getElementById('snapButton').disabled = this.value.trim() === '';
-});
+    let capturedImage = ''; // Store the captured image data
 
-function submitForm() {
-    const formData = new FormData(document.getElementById('studentForm'));
-    formData.append('image', capturedImage); // Append the base64 image
+    function capturePhoto() {
+        Webcam.snap(function(data_uri) {
+            const reviewPhoto = document.getElementById('reviewPhoto');
+            reviewPhoto.src = data_uri;
+            reviewPhoto.style.display = "block";
 
-    fetch('/add', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Student added successfully!');
-            location.reload(); // Refresh the page
-        } else {
-            alert('Error: ' + data.message);
+            document.getElementById('reviewIdno').textContent = document.getElementById('idno').value;
+            document.getElementById('reviewLastname').textContent = document.getElementById('lastname').value;
+            document.getElementById('reviewFirstname').textContent = document.getElementById('firstname').value;
+            document.getElementById('reviewSitio').textContent = document.getElementById('sitio').value;
+
+            capturedImage = data_uri;
+
+            // Generate QR Code
+            const qrData = document.getElementById('idno').value;
+            document.getElementById('qrCode').innerHTML = '';
+            new QRCode(document.getElementById('qrCode'), {
+                text: qrData,
+                width: 150,
+                height: 150
+            });
+        });
+    }
+
+    // Enable SNAP button only if IDNO entered
+    document.getElementById('idno').addEventListener('input', function () {
+        document.getElementById('snapButton').disabled = this.value.trim() === '';
+    });
+
+    function submitForm() {
+        if (!capturedImage) {
+            alert('Please capture a photo before saving.');
+            return;
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
 
+        const formData = new FormData(document.getElementById('youthForm'));
+        formData.append('image', capturedImage);
+
+        fetch('/saveinformation', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Youth added successfully!');
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function cancelAddYouth() {
+        // Reset form and preview
+        document.getElementById('youthForm').reset();
+        document.getElementById('reviewPhoto').src = '';
+        document.getElementById('reviewPhoto').style.display = 'none';
+        document.getElementById('qrCode').innerHTML = '';
+        capturedImage = '';
+        document.getElementById('snapButton').disabled = true;
+    }
 </script>
-
 
 {% endblock %}

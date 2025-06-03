@@ -28,15 +28,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for record in attendance_records %}
-                        <tr>
-                            <td>{{ record.idno }}</td>
-                            <td>{{ record.lastname }}</td>
-                            <td>{{ record.firstname }}</td>
-                            <td>{{ record.date }}</td>
-                            <td>{{ record.status }}</td>
-                        </tr>
+                   {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record.idno }}</td>
+                    <td>{{ record.lastname }}</td>
+                    <td>{{ record.firstname }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.status }}</td>
+                </tr>
                     {% endfor %}
+
                 </tbody>
             </table>
         </div>

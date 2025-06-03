@@ -1,279 +1,575 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie-edge,safari">
-		<link rel="stylesheet" href="{{ url_for('static',filename='css/w3.css')}}">
-		<title>Student Information V1.0</title>
-	</head>
-	<body onload="myfocus()">
-		<div class="w3-bar w3-container w3-padding w3-blue" style="display: flex; align-items: center; justify-content: space-between;">
-			<!-- Title aligned to the left -->
-			<h3 style="margin: 0;">{{ pagetitle }}</h3>
-			
-			
-		</div>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    <div class="w3-panel w3-green w3-card w3-round w3-padding w3-animate-opacity">
-        <ul class="w3-ul">
-            {% for message in messages %}
-                <li class="w3-text-white">{{ message }}</li>
-            {% endfor %}
-        </ul>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Student Information V2.0</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%), 
+                        url("{{ url_for('static', filename='sk_logo.png') }}") no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        /* Flash messages - positioned at top right */
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 350px;
+            width: auto;
+        }
+
+        .flash-message {
+            background: rgba(76, 175, 80, 0.95);
+            color: white;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInRight 0.5s ease-out;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .flash-message i {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Auto-hide flash messages after 5 seconds */
+        .flash-message {
+            animation: slideInRight 0.5s ease-out, fadeOutRight 0.5s ease-out 4.5s forwards;
+        }
+
+        /* Main content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Welcome section */
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-title {
+            font-weight: bold;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            max-width: 100px;
+            margin: 0 1rem;
+        }
+
+        /* Student card */
+        .student-info-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .student-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .student-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .student-info {
+            space-y: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #4f46e5;
+            min-width: 80px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #374151;
+            font-size: 1rem;
+            margin-left: 1rem;
+        }
+
+        /* Scan section */
+        .scan-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .scan-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .scan-icon {
+            color: #fbbf24;
+            animation: pulse 2s infinite;
+        }
+
+        /* Form container */
+        .form-container {
+            display: flex;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .attendance-form {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-in-out forwards;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .scan-title {
+                font-size: 1.5rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .student-card,
+            .attendance-form {
+                padding: 1.5rem;
+            }
+
+            .flash-messages {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .flash-message {
+                font-size: 0.85rem;
+                padding: 0.875rem 1rem;
+            }
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body onload="myfocus()">
+    <div class="header">
+        <h1>{{ pagetitle }}</h1>
     </div>
-{% endif %}
-{% endwith %} 
 
-<style>
-    body {
-        background: url('/mnt/data/1.jpg') no-repeat center center fixed;
-        background-size: cover;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 1400px; /* Increased max width for container */
-        margin: 0 auto;
-        padding-top: -200px;
-    }
-
-    h1 {
-        text-align: center;
-        color: #333;
-    }
-
-    .student-info-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 30px; /* Increased gap for wider spacing */
-        margin-top: 30px;
-    }
-
-    .student-card {
-        width: 400px; /* Increased width for each card */
-        background-color: rgba(0, 0, 0, 0.7); /* Darkened background with transparency */
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Darker shadow for better contrast */
-        overflow: hidden;
-        text-align: left; /* Align text to the left */
-        padding: 20px; /* Increased padding for better spacing */
-        transition: transform 0.3s ease-in-out;
-        margin-bottom: 30px; /* Increased bottom margin */
-        color: #fff; /* White text for better contrast with dark background */
-    }
-
-    .student-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .student-card img {
-        width: 100%;
-        height: 350px;
-        object-fit: cover;
-        border-bottom: 2px solid #f1f1f1;
-    }
-
-    .student-card .info {
-        padding: 20px 0; /* Increased padding inside info */
-    }
-
-    .student-card .info p {
-        margin: 20px 0;
-        color: #fff; /* White text for readability */
-        font-size: 1rem;
-    }
-
-    .student-card .info .label {
-        font-weight: bold;
-        color: #fff; /* White labels */
-        display: inline-block;
-        width: 140px; /* Increased width for labels */
-        text-align: left; /* Left-align labels */
-        text-transform: uppercase; /* Convert labels to uppercase */
-    }
-
-    .student-card .info .value {
-        display: inline-block;
-        color: #fff; /* White text for values */
-    }
-
-    .error-message {
-        color: red;
-        font-weight: bold;
-        text-align: center;
-    }
-    .container {
-        margin: 70px;
-        background: white;
-        padding: px;
-        border-radius: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        width: 350px;
-        text-align: center;
-        margin: auto;
-    }
-    a{
-        display: inline-block;
-        margin: 10px;
-        padding: 10px 20px;
-        text-decoration: none;
-    }
-    label {
-        display: block;
-        width: 50%;
-        margin-left: 10px;
-        margin-top: 10px;
-        margin-bottom: 5px;
-        text-align: left;
-        color: black;
-        font-weight: bold;
-        font-size: 15px;
-    }
-    
-    .forms {
-        display: none;
-    }
-    
-    #login-form:target, #signup-form:target {
-        display: block;
-    }
-    
-    .btn-clck{ 
-        width: 60px;
-        display: inline-block;
-        margin: 10px;
-        padding: 10px 20px;
-        background: #FF9D3D;
-        color: white;
-        text-decoration: none;
-        border-radius: 20px;
-        transition: background 0.3s;
-        margin-top: 15px;
-        font-weight: bold;
-        width: 100%;
-        padding: 12px;
-        color: white;
-        background-color: #FF9D3D;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-    }
-    
-    .btn-clck:hover {
-        background-color: #F7F0E2;
-        color: black;
-    }
-    
-    input {
-        width: calc(100% - 20px);
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        border-radius: 20px;
-    }
-    
-    
-    button:hover {
-        background-color: #F7F0E2;
-        color: black;
-    }
-    img{
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100%;
-        padding-bottom: 20px;
-    }
-
-    @keyframes fadeOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; display: none; }
-}
-
-.student-card {
-    animation: fadeOut 1s ease-in-out 4s forwards;
-}
-
-</style>
-<h3 class="w3-center"><b>Scan you ID here:</b></h3>
-<div class="container" style="opacity: 0; flex-direction: start;">
-    <form action="/mark_attendance" method="post" >
-        <input id="student_id" type="number" name="student_id" required>
-        
-        <label for="status" style="opacity: 0;">Status:</label>
-        <select name="status" style="opacity: 0;">
-            <option value="Present" selected style="opacity: 0;">Present</option>
-            <option value="Absent" style="opacity: 0;">Absent</option>
-        </select>
-        
-        <button type="submit" style="opacity: 0;">Mark Attendance</button>
-    </form>
-</div>
-<div id="student-details">
-    {% if student %}
-    <div class="student-info-container w3-gray-200">
-        {% for student in student %}
-            <div class="student-card w3-card w3-blue" id="student-card">
-                <img src="{{ url_for('static', filename='images/' + student['image'].split('/')[-1]) }}" alt="Student Image">
-                <div class="info">
-                    <p><span class="label">IDNO:</span> <span class="value">{{ student.idno }}</span></p>
-                    <p><span class="label">Last Name:</span> <span class="value">{{ student.lastname }}</span></p>
-                    <p><span class="label">First Name:</span> <span class="value">{{ student.firstname }}</span></p>
-                    <p><span class="label">Course:</span> <span class="value">{{ student.course }}</span></p>
-                    <p><span class="label">Level:</span> <span class="value">{{ student.level }}</span></p>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+                <div class="flash-message">
+                    <i class="fas fa-check-circle"></i> {{ message }}
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="main-content">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <img src="{{ url_for('static', filename='sk_logo.png') }}" alt="SK Logo" class="logo">
+            <h1 class="welcome-title">Welcome to SK HUB</h1>
+            <img src="{{ url_for('static', filename='sk_logo.png') }}" alt="SK Logo" class="logo">
+        </div>
+
+        <!-- Student Details -->
+        <div class="student-info-container" id="student-details">
+            {% if youths and youths|length > 0 %}
+                {% for youth in youths %}
+                    <div class="student-card" id="student-card">
+                        <img src="{{ url_for('static', filename='images/youths_name/' + (youth['image'] if youth['image'] else 'default.jpg')) }}" alt="Youth Image" />
+                        <div class="student-info">
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-user"></i> Name:</span>
+                                <span class="info-value">{{ youth['lastname'] }}, {{ youth['firstname'] }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-map-marker-alt"></i> Sitio:</span>
+                                <span class="info-value">{{ youth['sitio'] }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Scan Section -->
+        <div class="scan-section">
+            <h2 class="scan-title">
+                <i class="fas fa-qrcode scan-icon"></i>
+                Scan Your ID Here
+            </h2>
+        </div>
+
+        <!-- Attendance Form (Initially Hidden) -->
+        <div class="form-container" id="form-container">
+            <form class="attendance-form" action="/mark_attendance" method="post" id="attendance-form">
+                <div class="form-group">
+                    <label for="student_id" class="form-label">
+                        <i class="fas fa-id-card"></i> YOUTH ID
+                    </label>
+                    <input 
+                        id="student_id" 
+                        type="number" 
+                        name="student_id" 
+                        class="form-input"
+                        placeholder="Enter or scan your ID number"
+                        required 
+                        autofocus
+                    >
+                </div>
+                
+                <select name="status" style="display:none;">
+                    <option value="Present" selected>Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
+                
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    <span id="btn-text">ATTENDANCE</span>
+                    <span id="btn-loading" class="loading" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
     </div>
 
     <script>
-        // Wait for the page to fully load
         document.addEventListener("DOMContentLoaded", function() {
-            // Get the student card element
             const studentCard = document.getElementById("student-card");
+            const formContainer = document.getElementById("form-container");
+            const studentIdInput = document.getElementById("student_id");
+            const attendanceForm = document.getElementById("attendance-form");
+            const submitBtn = document.getElementById("submit-btn");
+            const btnText = document.getElementById("btn-text");
+            const btnLoading = document.getElementById("btn-loading");
 
-            // If the student card exists, hide it after 4 seconds
+            // Auto-hide student card after 4 seconds (only if youth data exists)
             if (studentCard) {
                 setTimeout(function() {
-                    studentCard.style.display = "none";
-                }, 4000); // 4000ms = 4 seconds
+                    studentCard.classList.add("fade-out");
+                    setTimeout(function() {
+                        studentCard.style.display = "none";
+                        // Show form after card disappears
+                        formContainer.classList.add("visible");
+                        studentIdInput.focus();
+                    }, 500);
+                }, 4000);
+            } else {
+                // Show form immediately if no student card
+                formContainer.classList.add("visible");
+                studentIdInput.focus();
             }
+
+            // Form submission with loading state
+            attendanceForm.addEventListener("submit", function(e) {
+                submitBtn.disabled = true;
+                btnText.style.display = "none";
+                btnLoading.style.display = "inline-block";
+            });
+
+            // Show student details when ID is entered
+            studentIdInput.addEventListener("input", function() {
+                const studentId = this.value;
+                const detailsSection = document.getElementById("student-details");
+                
+                if (studentId && studentId.length >= 3) {
+                    detailsSection.style.display = "flex";
+                } else {
+                    detailsSection.style.display = "none";
+                }
+            });
+
+            // Auto-focus on page load
+            function focusInput() {
+                if (formContainer.classList.contains("visible")) {
+                    studentIdInput.focus();
+                }
+            }
+
+            // Re-focus every few seconds to maintain scanner focus
+            setInterval(focusInput, 3000);
+
+            // Auto-hide flash messages after 5 seconds
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.display = 'none';
+                }, 5000);
+            });
         });
-    </script>
 
-    {% endif %}
-</div>
-
-
-<script>
-    function showStudentDetails() {
-        const studentId = document.getElementById('student_id').value;
-        const detailsSection = document.getElementById('student-details');
-    
-        if (studentId) {
-            detailsSection.style.display = 'block'; // Show the student details section
-            return true; // Allow form submission
+        // Original focus function for compatibility
+        function myfocus() {
+            document.getElementById("student_id").focus();
         }
-    
-        detailsSection.style.display = 'none'; // Hide the student details section
-        return false; // Prevent form submission
-    }
 
-    // Focus the student_id field when the page loads
-    function myfocus() {
-        document.getElementById("student_id").focus();
-    }
-
-    // Call myfocus on page load
-    window.onload = myfocus;
-</script>
-
-    </body>
-    </html>
-
-   
-
-
+        // Show student details function for compatibility
+        function showStudentDetails() {
+            const studentId = document.getElementById('student_id').value;
+            const detailsSection = document.getElementById('student-details');
+        
+            if (studentId) {
+                detailsSection.style.display = 'block';
+                return true;
+            }
+        
+            detailsSection.style.display = 'none';
+            return false;
+        }
+    </script>
+</body>
+</html>
